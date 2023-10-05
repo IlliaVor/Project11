@@ -1,5 +1,6 @@
 package MusicCollection;
 import java.io.*;
+import java.util.Scanner;
 
 import Music.Music;
 
@@ -8,42 +9,41 @@ public class MusicCollection {
     private Music[] tracks;
 
     //Constructor
-    public MusicCollection() {
+    public MusicCollection(int capacity) {
+        tracks = new Music[capacity];
         count = 0;
     }
 
-    private void resize(int newCapacity) {
-        Music[] newTracks = new Music[newCapacity];
 
-        if (count >= 0 && tracks != null)
-            System.arraycopy(tracks, 0, newTracks, 0, count);
-
-        tracks = newTracks;
+    public void add(Music music) {
+        if (count < tracks.length) {
+            tracks[count] = music;
+            count++;
+        } else {
+            throw new IllegalStateException("Music collection is full. Cannot add more tracks.");
+        }
     }
-
-
-    public void add(Music newTrack) {
-        if (tracks == null)
-            resize(1);
-        else if (count >= tracks.length)
-            resize(tracks.length * 2);
-        tracks[count] = newTrack;
-        count++;
-    }
-
 
     public void remove(int index) {
         if (index >= 0 && index < count) {
-            for (int i = index; i < count - 1; i++) {
-                tracks[i] = tracks[i + 1];
+            Music[] newTracks = new Music[tracks.length - 1];
+
+
+            for (int i = 0, j = 0; i < count; i++) {
+                if (i != index) {
+                    newTracks[j++] = tracks[i];
+                }
             }
+
+
+            tracks = newTracks;
             count--;
-            if (count <= tracks.length / 2)
-                resize(tracks.length / 2);
         } else {
             System.out.println("Invalid index");
         }
     }
+
+
 
 
     public void printOne(int index) {
@@ -71,7 +71,7 @@ public class MusicCollection {
     }
 
     //Method to search
-    public void search(String phrase) {
+    public static void search(String phrase) {
         boolean found = false;
 
         for (int i = 0; i < count; i++) {
@@ -93,18 +93,19 @@ public class MusicCollection {
             for (int j = 0; j < count - 1 - i; j++) {
                 if (tracks[j].getYear() > tracks[j + 1].getYear()) {
                     swap(tracks, j, j + 1);
-                    // Swap albums[j] and albums[j+1]
-                    //MusicAlbum temp = albums[j];
-                    //albums[j] = albums[j + 1];
-                    //albums[j + 1] = temp;
+
+                    //Music temp = tracks[j];
+                    //tracks[j] = tracks[j +1 ];
+                    //tracks[j+1 ] = temp;
                 }
             }
         }
     }
-    public static void swap(Music[] tracks,int ind1, int ind2 ) {
+
+    public static void swap(Music[] tracks, int ind1, int ind2) {
         Music temp = tracks[ind1];
-        tracks[ind1] = tracks[ind2 ];
-        tracks[ind2 ] = temp;
+        tracks[ind1] = tracks[ind2];
+        tracks[ind2] = temp;
 
     }
 
@@ -143,7 +144,7 @@ public class MusicCollection {
             bufferedWriter.write(getAll());
 
             bufferedWriter.close();
-            System.out.println("Content has been written to the file successfully.");
+            System.out.println("Content successfully written to file.");
         } catch (IOException e) {
             System.err.println("An error occurred: " + e.getMessage());
         }
@@ -166,4 +167,6 @@ public class MusicCollection {
             System.err.println("An error occurred: " + e.getMessage());
         }
     }
+
 }
+

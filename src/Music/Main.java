@@ -3,18 +3,46 @@ import java.util.Scanner;
 import MusicCollection.MusicCollection;
 
 public class Main {
+    private static MusicCollection albumCollection;
+
+    private static Scanner scanner;
+
+    private static int getUserInt() {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                scanner.nextLine();
+                System.out.println("\u001B[31mIt is not a number. Try again: \u001B[0m");
+            }
+        }
+    }
+
+    private static double getUserDouble() {
+        while (true) {
+            try {
+                return scanner.nextDouble();
+            } catch (InputMismatchException e) {
+                scanner.nextLine();
+                System.out.println("\u001B[31mIt is not a number. Try again: \u001B[0m");
+            }
+        }
+    }
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         MusicCollection trackCollection = new MusicCollection(50);
 
-        System.out.println("Welcome to 'The Sopranos' episode database!");
+        System.out.println("Welcome to songs database!");
         while (true) {
-            System.out.println("\nChoose an option to proceed:");
-            System.out.println("1 - Add an episode to the collection");
-            System.out.println("2 - Print all episodes");
-            System.out.println("3 - Print details of a single episode");
-            System.out.println("4 - Sort episodes by episode number");
-            System.out.println("5 - Search episodes by title or year");
+            System.out.println("1 - Add tracks to collection");
+            System.out.println("2 - Print track list");
+            System.out.println("3 - Sort tracks by release year");
+            System.out.println("4 - Search track by a phrase");
+            System.out.println("5 - Search track by release year");
+            System.out.println("6 - Remove a track from the collection");
+            System.out.println("7 - Print detailed track");
+            System.out.println("8 - Read tracks from a file");
+            System.out.println("9 - Save tracks to a file");
             System.out.println("0 - Exit the program");
 
             int choice = in.nextInt();
@@ -28,15 +56,25 @@ public class Main {
                     trackCollection.print();
                     break;
                 case 3:
-                    printSingleEpisode(in, trackCollection);
+                    trackCollection.sort();
                     break;
                 case 4:
-                    trackCollection.sort();
-                    System.out.println("Episodes sorted by episode number.");
-                    trackCollection.print();
+                    searchByPhrase(in, trackCollection);
                     break;
                 case 5:
-                    search(in, trackCollection);
+                    searchByYear(in, trackCollection);
+                    break;
+                case 6:
+                    trackCollection.remove(in, trackCollection);
+                    break;
+                case 7:
+
+                    break;
+                case 8:
+
+                    break;
+                case 9:
+
                     break;
                 case 0:
                     System.out.println("Goodbye!");
@@ -49,7 +87,7 @@ public class Main {
         }
     }
     public static void inputItems(Scanner in, MusicCollection trackCollection) {
-        System.out.println("Enter episode details (title, season, episode number, year) or 'stop' to exit:");
+        System.out.println("Enter track details (title, Band, year, length) or 'stop' to exit:");
 
         while (true) {
             System.out.print("Title: ");
@@ -60,22 +98,34 @@ public class Main {
             }
 
             System.out.print("Band: ");
-            String band = in.nextInt();
+            String band = in.nextLine();
             in.nextLine();
 
             System.out.print("Year: ");
-            int episodeNumber = in.nextInt();
+            int year = in.nextInt();
             in.nextLine();
 
             System.out.print("Length: ");
             double songLength = in.nextInt();
             in.nextLine();
 
-            Music episode = new Music(title, band, episodeNumber, year);
-            episodeCollection.add(episode);
-            System.out.println("Episode added to the collection.");
+            Music track = new Music(title, band, year, songLength);
+            trackCollection.add(track);
+            System.out.println("Track added to the collection.");
         }
     }
+    private static void search(Scanner in) {
+        System.out.print("Enter a phrase to search for: ");
+        String title = in.nextLine();
+        MusicCollection.search(title);
+    }
+    private static void searchByYear() {
+        System.out.print("Enter release year to search for albums: ");
+        int year = getUserInt();
+        in.nextLine(); // Consume newline character
+        MusicCollection.searchByProperty(year);
+
+
+      }
 
 }
-
