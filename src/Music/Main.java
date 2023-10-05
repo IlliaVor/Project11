@@ -1,19 +1,20 @@
 package Music;
 import java.util.Scanner;
 import MusicCollection.MusicCollection;
+import java.util.InputMismatchException;
 
 public class Main {
-    private static MusicCollection albumCollection;
+    private static MusicCollection trackCollection;
 
-    private static Scanner scanner;
+    private static Scanner in;
 
     private static int getUserInt() {
         while (true) {
             try {
-                return scanner.nextInt();
+                return in.nextInt();
             } catch (InputMismatchException e) {
-                scanner.nextLine();
-                System.out.println("\u001B[31mIt is not a number. Try again: \u001B[0m");
+                in.nextLine();
+                System.out.println("Try again");
             }
         }
     }
@@ -21,10 +22,10 @@ public class Main {
     private static double getUserDouble() {
         while (true) {
             try {
-                return scanner.nextDouble();
+                return in.nextDouble();
             } catch (InputMismatchException e) {
-                scanner.nextLine();
-                System.out.println("\u001B[31mIt is not a number. Try again: \u001B[0m");
+                in.nextLine();
+                System.out.println("Try again.");
             }
         }
     }
@@ -53,35 +54,36 @@ public class Main {
                     inputItems(in, trackCollection);
                     break;
                 case 2:
-                    trackCollection.print();
+                    trackCollection.printList();
                     break;
                 case 3:
                     trackCollection.sort();
+                    trackCollection.printList();
                     break;
                 case 4:
-                    searchByPhrase(in, trackCollection);
+                    search();
                     break;
                 case 5:
                     searchByYear(in, trackCollection);
                     break;
                 case 6:
-                    trackCollection.remove(in, trackCollection);
+                    removeItem();
                     break;
                 case 7:
-
+                    trackCollection.print();
                     break;
                 case 8:
-
+                    readFromFile();
                     break;
                 case 9:
-
+                    saveToFile();
                     break;
                 case 0:
                     System.out.println("Goodbye!");
                     in.close();
                     System.exit(0);
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice.");
                     break;
             }
         }
@@ -99,7 +101,7 @@ public class Main {
 
             System.out.print("Band: ");
             String band = in.nextLine();
-            in.nextLine();
+
 
             System.out.print("Year: ");
             int year = in.nextInt();
@@ -114,18 +116,36 @@ public class Main {
             System.out.println("Track added to the collection.");
         }
     }
-    private static void search(Scanner in) {
+    private static void search() {
         System.out.print("Enter a phrase to search for: ");
         String title = in.nextLine();
         MusicCollection.search(title);
     }
-    private static void searchByYear() {
-        System.out.print("Enter release year to search for albums: ");
+    private static void searchByYear(Scanner in, MusicCollection trackCollection) {
+        System.out.print("Enter release year: ");
         int year = getUserInt();
-        in.nextLine(); // Consume newline character
-        MusicCollection.searchByProperty(year);
-
-
+        in.nextLine();
+        MusicCollection.searchByYear(year);
       }
+
+    private static void removeItem() {
+        System.out.print("Enter index: ");
+        int index = getUserInt();
+        in.nextLine();
+        MusicCollection.remove(index);
+    }
+    private static void readFromFile() {
+        System.out.print("Enter file name to read from: ");
+        String fileName = in.nextLine();
+        trackCollection.readFromFile(fileName);
+    }
+
+    private static void saveToFile() {
+        System.out.print("Enter file name to save to: ");
+        String fileName = in.nextLine();
+        trackCollection.saveToFile(fileName);
+    }
+
+
 
 }

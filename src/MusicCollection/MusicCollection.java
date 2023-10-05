@@ -1,12 +1,11 @@
 package MusicCollection;
 import java.io.*;
-import java.util.Scanner;
 
 import Music.Music;
 
 public class MusicCollection {
-    private int count;
-    private Music[] tracks;
+    private static int count;
+    private static Music[] tracks;
 
     //Constructor
     public MusicCollection(int capacity) {
@@ -24,10 +23,9 @@ public class MusicCollection {
         }
     }
 
-    public void remove(int index) {
+    public static void remove(int index) {
         if (index >= 0 && index < count) {
             Music[] newTracks = new Music[tracks.length - 1];
-
 
             for (int i = 0, j = 0; i < count; i++) {
                 if (i != index) {
@@ -36,7 +34,7 @@ public class MusicCollection {
             }
 
 
-            tracks = newTracks;
+            System.arraycopy(newTracks, 0, tracks, 0, newTracks.length);
             count--;
         } else {
             System.out.println("Invalid index");
@@ -70,7 +68,7 @@ public class MusicCollection {
         }
     }
 
-    //Method to search
+
     public static void search(String phrase) {
         boolean found = false;
 
@@ -110,7 +108,7 @@ public class MusicCollection {
     }
 
 
-    public void searchByProperty(int year) {
+    public static void searchByYear(int year) {
         boolean found = false;
 
         for (int i = 0; i < count; i++) {
