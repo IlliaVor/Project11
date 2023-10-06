@@ -3,9 +3,12 @@ import java.io.*;
 
 import Music.Music;
 
+import java.io.*;
+import java.util.Arrays;
+
 public class MusicCollection {
-    private static int count;
-    private static Music[] tracks;
+    private int count;
+    private Music[] tracks;
 
     //Constructor
     public MusicCollection(int capacity) {
@@ -16,32 +19,26 @@ public class MusicCollection {
 
     public void add(Music music) {
         if (count < tracks.length) {
-            tracks[count] = music;
-            count++;
+            tracks[count++] = music;
         } else {
-            throw new IllegalStateException("Music collection is full. Cannot add more tracks.");
+            int newSize = tracks.length + 1;
+            tracks = Arrays.copyOf(tracks, newSize);
+            add(music);
         }
     }
 
-    public static void remove(int index) {
-        if (index >= 0 && index < count) {
-            Music[] newTracks = new Music[tracks.length - 1];
-
-            for (int i = 0, j = 0; i < count; i++) {
-                if (i != index) {
-                    newTracks[j++] = tracks[i];
-                }
-            }
-
-
-            System.arraycopy(newTracks, 0, tracks, 0, newTracks.length);
-            count--;
-        } else {
+    public void remove(int index) {
+        if (index < 0 || index >= count) {
             System.out.println("Invalid index");
+        } else {
+            int newSize = tracks.length - 1;
+            Music[] arr = new Music[newSize];
+            System.arraycopy(tracks, 0, arr, 0, index);
+            System.arraycopy(tracks, index + 1, arr, index, newSize - index);
+            tracks = arr;
+            count--;
         }
     }
-
-
 
 
     public void printOne(int index) {
@@ -69,12 +66,12 @@ public class MusicCollection {
     }
 
 
-    public static void search(String phrase) {
+    public void search(String phrase) {
         boolean found = false;
 
         for (int i = 0; i < count; i++) {
-            if (tracks[i].getTitle().toLowerCase().contains(phrase.toLowerCase()) ||
-                    tracks[i].getBand().toLowerCase().contains(phrase.toLowerCase())) {
+            Music track = tracks[i];
+            if (track.getMusicDescription().toLowerCase().contains(phrase.toLowerCase())) {
                 System.out.println("Matching:");
                 System.out.println(tracks[i].getMusicDescription());
                 found = true;
@@ -87,16 +84,18 @@ public class MusicCollection {
 
 
     public void sort() {
-        for (int i = 0; i < count - 1; i++) {
-            for (int j = 0; j < count - 1 - i; j++) {
+        int i, j;
+        boolean swapped;
+        for (i = 0; i < count - 1; i++) {
+            swapped = false;
+            for (j = 0; j < count - i - 1; j++) {
                 if (tracks[j].getYear() > tracks[j + 1].getYear()) {
                     swap(tracks, j, j + 1);
-
-                    //Music temp = tracks[j];
-                    //tracks[j] = tracks[j +1 ];
-                    //tracks[j+1 ] = temp;
+                    swapped = true;
                 }
             }
+            if (!swapped)
+                break;
         }
     }
 
@@ -108,7 +107,7 @@ public class MusicCollection {
     }
 
 
-    public static void searchByYear(int year) {
+    public void searchByYear(int year) {
         boolean found = false;
 
         for (int i = 0; i < count; i++) {
@@ -123,48 +122,38 @@ public class MusicCollection {
         }
     }
 
-    private String getAll() {
+    private String getAllRecords() {
         StringBuilder output = new StringBuilder();
 
         for (int i = 0; i < count; i++) {
-            output.append(tracks[i].getMusicDescription()).append("\n");
+            output.append(tracks[i].getFileRepresentation()).append("\n");
         }
 
         return output.toString();
     }
 
 
-    public void saveToFile(String path) {
-        try {
-            FileWriter fileWriter = new FileWriter(path);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+    public void saveToFile(String path) throws IOException {
+        FileWriter fileWriter = new FileWriter(path);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-            bufferedWriter.write(getAll());
+        bufferedWriter.write(getAllRecords());
 
-            bufferedWriter.close();
-            System.out.println("Content successfully written to file.");
-        } catch (IOException e) {
-            System.err.println("An error occurred: " + e.getMessage());
-        }
+        bufferedWriter.close();
+        System.out.println("Content successfully written to file.");
+
     }
-
-
-    public void readFromFile(String path) {
-        try {
-            FileReader fileReader = new FileReader(path);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                System.out.println(line);
-                line = bufferedReader.readLine();
-            }
-
-            bufferedReader.close();
-        } catch (IOException e) {
-            System.err.println("An error occurred: " + e.getMessage());
+    public void readFromFile(String path) throws IOException {
+        FileReader fileReader = new FileReader(path);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String line = bufferedReader.readLine();
+        while (line != null && !line.trim().isEmpty()) {
+            add(Music.fromString(line));
+            line = bufferedReader.readLine();
         }
-    }
+        bufferedReader.close();
 
+    }
 }
+
 

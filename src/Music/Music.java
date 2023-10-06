@@ -1,13 +1,17 @@
 package Music;
 
+import java.util.Locale;
+
 public class Music {
     private String title;
     private String band;
     private int year;
     private double songLength;
 
+    public Music() {
+    }
 
-    public Music(String title, String band, int year, double songLength ) {
+    public Music(String title, String band, int year, double songLength) {
         this.title = title;
         this.band = band;
         this.year = year;
@@ -39,11 +43,11 @@ public class Music {
         this.year = year;
     }
 
-    public double getsongLength() {
+    public double getSongLength() {
         return songLength;
     }
 
-    public void setPrice(double songLength) {
+    public void setSongLength(double songLength) {
         this.songLength = songLength;
     }
 
@@ -56,6 +60,31 @@ public class Music {
 
     public String getMusicDescription() {
         return "Title: " + title + "\nBand: " + band + "\nYear: " + year + "\nSong length in minutes: " + songLength;
+    }
+
+    public String getFileRepresentation() {
+        return String.format(Locale.US,"title: %s; band: %s; year: %d; length: %.2f", title, band, year, songLength);
+    }
+
+    public static Music fromString(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return handleInvalidFileRecord(s);
+        }
+        String[] parts = s.split("; ");
+        if (parts.length != 4) {
+            return handleInvalidFileRecord(s);
+        }
+        Music music = new Music();
+        music.setTitle(parts[0].split(": ")[1]);
+        music.setBand(parts[1].split(": ")[1]);
+        music.setYear(Integer.parseInt(parts[2].split(": ")[1]));
+        music.setSongLength(Double.parseDouble(parts[3].split(": ")[1]));
+        return music;
+    }
+
+    private static Music handleInvalidFileRecord(String s) {
+        System.out.println("invalid file record: " + s);
+        return null;
     }
 }
 
