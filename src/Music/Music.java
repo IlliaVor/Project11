@@ -52,11 +52,6 @@ public class Music {
     }
 
 
-    public int calculateAge() {
-        int currentYear = java.time.Year.now().getValue();
-        return currentYear - year;
-    }
-
 
     public String getMusicDescription() {
         return "Title: " + title + "\nBand: " + band + "\nYear: " + year + "\nSong length in minutes: " + songLength;

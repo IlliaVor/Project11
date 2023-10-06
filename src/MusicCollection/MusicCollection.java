@@ -3,14 +3,13 @@ import java.io.*;
 
 import Music.Music;
 
-import java.io.*;
 import java.util.Arrays;
 
 public class MusicCollection {
     private int count;
     private Music[] tracks;
 
-    //Constructor
+
     public MusicCollection(int capacity) {
         tracks = new Music[capacity];
         count = 0;
